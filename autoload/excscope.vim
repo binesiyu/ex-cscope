@@ -69,7 +69,8 @@ endfunction
 function excscope#init_buffer()
     set filetype=excscope
     augroup excscope
-        au! BufWinLeave <buffer> call <SID>on_close()
+        " au! BufWinLeave <buffer> call <SID>on_close()
+        au! WinLeave <buffer> call <SID>on_close()
     augroup END
 
     if line('$') <= 1 && g:ex_cscope_enable_help
@@ -100,7 +101,7 @@ function excscope#open_window()
                     \ s:title, 
                     \ g:ex_cscope_winsize,
                     \ g:ex_cscope_winpos,
-                    \ 1,
+                    \ 0,
                     \ 1,
                     \ function('excscope#init_buffer')
                     \ )
@@ -599,6 +600,10 @@ function excscope#confirm_select(modifier)
     let s:confirm_at = line('.')
     call ex#hl#confirm_line(s:confirm_at)
     call excscope#goto(a:modifier)
+    " go back to global search window 
+    exe 'normal! zz'
+    call ex#hl#target_line(line('.'))
+    call ex#window#goto_plugin_window()
 endfunction
 
 " excscope#select {{{2
